@@ -18,8 +18,13 @@ async function invoke(client) {
 
 	client.application.commands.set(commandsArray);
 
+	client.user.setActivity('Got root?', { type: 'WATCHING' });	
 	console.log(`Successfully logged in as ${client.user.tag}!`);
+
 	console.log(`Loaded ${commands.length} commands!`)
+	for (let command of commands) {
+		console.log(`"${command}", description: ${commandsArray[commands.indexOf(command)].description}`);
+	} 
 }
 
 export { once, name, invoke };

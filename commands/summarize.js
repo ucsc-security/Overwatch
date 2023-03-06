@@ -48,7 +48,7 @@ const invoke = async (interaction) => {
 		messages.forEach((message) => {
 			var author = message.member ? message.member.displayName : message.author.username;
 			var time = message.createdAt.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit' });
-			var content = message.content + (message.attachments.size > 0 ? ` <attached an file \"${message.attachments.first().name}\">` : '');
+			var content = message.content + (message.attachments.size > 0 ? ` <attached a file \"${message.attachments.first().name}\">` : '');
 
 			messages_text += `${author} at ${time}: ${content}\n`;
 		});

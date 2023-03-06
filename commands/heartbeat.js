@@ -5,7 +5,8 @@ const db = new Database('heartbeat.db');
 const create = () => {
 	const command = new SlashCommandBuilder()
 		.setName('heartbeat')
-		.setDescription('Enroll thread to be kept alive, or remove enrollment');
+		.setDescription('Enroll thread to be kept alive, or remove enrollment')
+		.setDMPermission(false);
 
 	db.exec("CREATE TABLE IF NOT EXISTS enrolled('threadID' text);");
 	return command.toJSON();

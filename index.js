@@ -1,8 +1,21 @@
 import {} from 'dotenv/config';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import fs from "fs";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ 
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers
+	],
+	partials: [
+		Partials.Channel,
+		Partials.Message,
+		Partials.User,
+		Partials.GuildMember
+	],
+});
 
 // Fetch all js files in ./events
 const events = fs

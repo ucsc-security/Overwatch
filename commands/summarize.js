@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, Collection  } from 'discord.js';
 import { } from 'dotenv/config';
-const PROMPT = 'Using bullet points, summarize in detail the following messages:'
+const PROMPT = 'Using bullet points, summarize in detail (do not directly mention the time) the following messages:';
 const TOKEN_RATE = 0.002 / 1000; // $0.002 / 1K tokens
 
 import { Configuration, OpenAIApi } from "openai";
@@ -44,12 +44,12 @@ const invoke = async (interaction) => {
 	let messages_text = '';
 	await interaction.channel.messages.fetch({ limit: num_messages }).then((messages) => {
 		messages = messages.reverse();
-		
+
 		messages.forEach((message) => {
 			var author = message.member ? message.member.displayName : message.author.username;
-			var time =`${message.createdAt.getHours().toString().padStart(2, '0')}:${message.createdAt.getMinutes().toString().padStart(2, '0')}`;
+			var time = message.createdAt.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit' });
 			var content = message.content + (message.attachments.size > 0 ? ` <attached an file \"${message.attachments.first().name}\">` : '');
-			
+
 			messages_text += `${author} at ${time}: ${content}\n`;
 		});
 	}).catch((error) => {

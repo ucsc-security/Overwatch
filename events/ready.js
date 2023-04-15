@@ -15,7 +15,6 @@ async function invoke(client) {
 	for (let command of commands) {
 		const commandFile = await import(`#commands/${command}`);
 		commandsArray.push(commandFile.create());
-		console.log(`Found command ${commandFile.name}`);
 	}
 
 	client.application.commands.set(commandsArray);

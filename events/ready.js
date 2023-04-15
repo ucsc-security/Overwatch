@@ -4,6 +4,7 @@ const once = true;
 const name = 'ready';
 
 async function invoke(client) {
+	console.log('Fetching commands...');
 	const commands = fs
 		.readdirSync('./commands')
 		.filter((file) => file.endsWith('.js'))
@@ -14,9 +15,11 @@ async function invoke(client) {
 	for (let command of commands) {
 		const commandFile = await import(`#commands/${command}`);
 		commandsArray.push(commandFile.create());
+		console.log(`Found command ${commandFile.name}`);
 	}
 
 	client.application.commands.set(commandsArray);
+	console.log('Commands fetched and loaded!')
 
 	client.user.setActivity('Got root?', { type: 'WATCHING' });	
 	console.log(`Successfully logged in as ${client.user.tag}!`);

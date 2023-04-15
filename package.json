@@ -9,11 +9,13 @@
 		"better-sqlite3": "^8.1.0",
 		"discord.js": "^14.7.1",
 		"dotenv": "^16.0.3",
+		"node-cron": "^3.0.2",
 		"openai": "^3.2.1"
 	},
 	"imports": {
 		"#events/*": "./events/*",
-		"#commands/*": "./commands/*.js"
+		"#commands/*": "./commands/*.js",
+		"#jobs/*": "./jobs/*.js"
 	},
 	"type": "module"
 }

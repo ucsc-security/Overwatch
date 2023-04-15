@@ -27,6 +27,21 @@ async function invoke(client) {
 	for (let command of commands) {
 		console.log(`"${command}", description: ${commandsArray[commands.indexOf(command)].description}`);
 	} 
+	
+	// Jobs
+	console.log('Fetching jobs...');
+	const jobs = fs
+		.readdirSync('./jobs')
+		.filter((file) => file.endsWith('.js'))
+		.map((file) => file.slice(0, -3));
+
+	// Execute the jobs
+	for (let job of jobs) {
+		const jobFile = await import(`#jobs/${job}`);
+		jobFile.default(client);
+		console.log(`Executing job ${job}`);
+	}
+	console.log('Jobs fetched and executed!');
 }
 
 export { once, name, invoke };

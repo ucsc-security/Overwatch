@@ -22,7 +22,7 @@ const getUserData = async (userID) => {
 
 const create = () => {
 	const command = new SlashCommandBuilder()
-		.setName('link-ictf')
+		.setName('dev-link-ictf')
 		.setDescription('Link your Imaginary CTF account to announce when you capture a flag. To unlink, rerun this command.')
 		.addIntegerOption((option) => option
 			.setName('ictf-account-id')

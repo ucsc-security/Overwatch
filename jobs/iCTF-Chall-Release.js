@@ -83,8 +83,6 @@ const checkForNewChallenges = async (client) => {
 			if (!existingChallenge) {
 				console.log(`New challenge released! ${challenge.title} - ${challenge.id}`);
 				announceChallengeRelease(client, challenge);
-			} else {
-				console.log(`Challenge ${challenge.title} - ${challenge.id} already exists!`);
 			}
 		}
 	}

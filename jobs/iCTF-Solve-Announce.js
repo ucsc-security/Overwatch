@@ -27,8 +27,7 @@ const announceChallengeSolved = async (client, user, challenge) => {
 	if (threadID) {
 		const thread = await client.channels.fetch(threadID);
 		if (thread) {
-			const msg = await thread.send(`<@${user.discordUserID}> has solved the challenge "${challenge.title}"!`);
-			await msg.react('🎉');
+			await thread.send(`@silent🎉 <@${user.discordUserID}> has solved the challenge "${challenge.title}"!`);
 			db.prepare('INSERT INTO solves_announced (UserID, ChallengeID) VALUES (?, ?)').run(user.iCTFAccountID, challenge.id);
 		} else {
 			console.error(`Thread not found for challenge ${challenge.title} - ${challenge.id}`);

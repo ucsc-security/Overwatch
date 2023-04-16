@@ -28,10 +28,13 @@ const announceChallengeSolved = async (client, user, challenge) => {
 	if (threadID) {
 		const thread = await client.channels.fetch(threadID);
 		if (thread) {
-			// Silent notification
-			await thread.send({ content: `<@${user.discordUserID}> has solved this challenge! 🎉`, flags: MessageFlags.SuppressNotifications });
+			await thread.send({ 
+				content: `<@${user.discordUserID}> has solved this challenge! 🎉`, 
+				flags: MessageFlags.SuppressNotifications 
+			});
 			db.prepare('INSERT INTO solves_announced (UserID, ChallengeID) VALUES (?, ?)').run(user.iCTFAccountID, challenge.id);
-			console.log(`Announced ${user.iCTFAccountID} solved ${challenge.title} - ${challenge.id} in thread ${threadID}`);
+
+			console.log(`Announced <@${user.discordUserID}> (${user.iCTFAccountID}) solved ${challenge.id} - "${challenge.title}" in <#${threadID}>`);
 		} else {
 			console.error(`Failed to get thread for ${challenge.title} - ${challenge.id}`);
 		}

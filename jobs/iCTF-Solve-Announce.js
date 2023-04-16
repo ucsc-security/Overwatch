@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import fetch from 'node-fetch';
 import Database from 'better-sqlite3';
+import { MessageFlags } from 'discord.js';
 
 const API_BASE_URL = 'https://imaginaryctf.org/api/solves/byuserid/';
 const db = new Database('iCTF.db');
@@ -27,13 +28,13 @@ const announceChallengeSolved = async (client, user, challenge) => {
 	if (threadID) {
 		const thread = await client.channels.fetch(threadID);
 		if (thread) {
-			await thread.send(`@silent🎉 <@${user.discordUserID}> has solved this challenge!`);
+			// Silent notification
+			await thread.send({ content: `<@${user.discordUserID}> has solved this challenge! 🎉`, flags: MessageFlags.SuppressNotifications });
 			db.prepare('INSERT INTO solves_announced (UserID, ChallengeID) VALUES (?, ?)').run(user.iCTFAccountID, challenge.id);
+			console.log(`Announced ${user.iCTFAccountID} solved ${challenge.title} - ${challenge.id} in thread ${threadID}`);
 		} else {
-			console.error(`Thread not found for challenge ${challenge.title} - ${challenge.id}`);
+			console.error(`Failed to get thread for ${challenge.title} - ${challenge.id}`);
 		}
-	} else {
-		console.error(`Thread ID not found for challenge ${challenge.title} - ${challenge.id}`);
 	}
 }
 

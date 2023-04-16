@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ActivityTypes } from 'discord.js';
+import { ActivityType } from 'discord.js';
 
 const once = true;
 const name = 'ready';
@@ -21,7 +21,7 @@ async function invoke(client) {
 	client.application.commands.set(commandsArray);
 	console.log('Commands fetched and loaded!')
 
-	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityTypes.WATCHING }], status: 'online' }); 
+	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityType.Watching }], status: 'online' }); 
 	console.log(`Successfully logged in as ${client.user.tag}!`);
 
 	console.log(`Loaded ${commands.length} commands!`)

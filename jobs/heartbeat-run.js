@@ -36,7 +36,8 @@ async function pacemaker(client) {
 
 		const lastMessageTimestamp = lastMessage.createdTimestamp;
 		const timeTillArchive = archiveDuration - (Date.now() - lastMessageTimestamp);
-		console.log(`debug checking <#${threadID}>: ${timeTillArchive/1000/60} minutes till archive`);
+
+		console.log(`Heartbeat: #${thread.name}: ${(timeTillArchive/1000/60).toFixed(2)} minutes till archive`);
 
 		if (timeTillArchive < 3600000) // Less than 1 hour
 			await sendHeartbeat(thread, ghost);

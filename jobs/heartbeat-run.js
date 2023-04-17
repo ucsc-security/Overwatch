@@ -23,7 +23,7 @@ async function pacemaker(client) {
 
 	for (const row of enrolledThreads) {
 		const threadID = row.threadID;
-		const ghost = row.ghost === 1;
+		const ghost = row.ghostEnabled === 1;
 		const thread = await client.channels.fetch(threadID);
 
 		if (!thread) {

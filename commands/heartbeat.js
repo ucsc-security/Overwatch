@@ -12,7 +12,7 @@ const create = () => {
 			.setDescription('Ghost heartbeat; delete heartbeat message after 5 seconds')
 		);
 
-	db.exec("CREATE TABLE IF NOT EXISTS heartbeat_enrolled ('threadID' text, 'ghost' integer, PRIMARY KEY('threadID'))");
+	db.exec("CREATE TABLE IF NOT EXISTS heartbeat_enrolled ('threadID' text, 'ghostEnabled' integer, PRIMARY KEY('threadID'))");
 	return command.toJSON();
 }
 
@@ -37,7 +37,7 @@ const invoke = (interaction) => {
 
 		console.log(`<#${threadID}> has been unenrolled from Heartbeat`);
 	} else {
-		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghost) VALUES (?, ?)').run(threadID, ghost ? 1 : 0);
+		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghostEnabled) VALUES (?, ?)').run(threadID, ghost ? 1 : 0);
 		interaction.reply({
 			content: `<#${threadID}> has been enrolled into Heartbeat with ghost mode set to ${ghost}! 💓`
 		});

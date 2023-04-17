@@ -39,8 +39,8 @@ async function invoke(client) {
 	// Execute the jobs
 	for (let job of jobs) {
 		const jobFile = await import(`#jobs/${job}`);
-		jobFile.default(client);
 		console.log(`Executing job ${job}`);
+		jobFile.default(client);
 	}
 	console.log('Jobs fetched and executed!');
 }

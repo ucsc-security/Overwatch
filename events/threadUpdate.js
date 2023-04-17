@@ -2,14 +2,14 @@ const once = false;
 const name = 'threadUpdate';
 
 import Database from 'better-sqlite3';
-const db = new Database('heartbeat.db');
+const db = new Database('server.db');
 
 async function invoke(_oldThread, newThread) {
 	if (newThread.archived) {
-		const enrolled = db.prepare('SELECT * FROM enrolled WHERE threadID = ?').get(newThread.id);
+		const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(newThread.id);
 		if (enrolled) {
-			console.log(`Sending heartbeat to thread ${newThread.name}`);
-			await newThread.send('Heartbeat!');
+			db.prepare('DELETE FROM heartbeat_enrolled WHERE threadID = ?').run(newThread.id);
+			console.log(`Unenrolled thread ${newThread.name} <#${newThread.id}> due to archival`);
 		}
 	}
 }

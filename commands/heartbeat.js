@@ -1,14 +1,18 @@
 import { SlashCommandBuilder } from 'discord.js';
 import Database from 'better-sqlite3';
-const db = new Database('heartbeat.db');
+const db = new Database('server.db');
 
 const create = () => {
 	const command = new SlashCommandBuilder()
 		.setName('heartbeat')
 		.setDescription('Enroll thread to be kept alive, or remove enrollment')
-		.setDMPermission(false);
+		.setDMPermission(false)
+		.addBooleanOption((option) => option
+			.setName('ghost')
+			.setDescription('Ghost heartbeat; delete heartbeat message after 5 seconds')
+		);
 
-	db.exec("CREATE TABLE IF NOT EXISTS enrolled('threadID' text);");
+	db.exec("CREATE TABLE IF NOT EXISTS heartbeat_enrolled ('threadID' text, 'ghost' integer, PRIMARY KEY('threadID'))");
 	return command.toJSON();
 }
 
@@ -22,19 +26,23 @@ const invoke = (interaction) => {
 	}
 	
 	let threadID = interaction.channelId;
-	const enrolled = db.prepare('SELECT * FROM enrolled WHERE threadID = ?').get(threadID);
+	const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(threadID);
+	const ghost = interaction.options.getBoolean('ghost') ?? false;
+
 	if (enrolled) {
-		db.prepare('DELETE FROM enrolled WHERE threadID = ?').run(threadID);
-		console.log(`Unenrolled thread ${threadID}`);
+		db.prepare('DELETE FROM heartbeat_enrolled WHERE threadID = ?').run(threadID);
 		interaction.reply({
-			content: `${interaction.channel.name} unenrolled!`
+			content: `<#${threadID}> unenrolled from Heartbeat! 💔`
 		});
+
+		console.log(`<#${threadID}> has been unenrolled from Heartbeat`);
 	} else {
-		db.prepare('INSERT INTO enrolled VALUES (?)').run(threadID);
-		console.log(`Enrolled thread ${threadID}`);
+		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghost) VALUES (?, ?)').run(threadID, ghost ? 1 : 0);
 		interaction.reply({
-			content: `${interaction.channel.name} has been enrolled into heartbeat! This thread will be reopened if closed. To unenroll, use the same command.`
+			content: `<#${threadID}> has been enrolled into Heartbeat with ghost mode set to ${ghost}! 💓`
 		});
+
+		console.log(`<#${threadID}> has been enrolled into Heartbeat with ghost mode set to ${ghost}`);
 	}
 }
 

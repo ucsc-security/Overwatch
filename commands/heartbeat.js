@@ -5,11 +5,11 @@ const db = new Database('server.db');
 const create = () => {
 	const command = new SlashCommandBuilder()
 		.setName('heartbeat')
-		.setDescription('Enroll thread to be kept alive, or remove enrollment')
+		.setDescription('Sends a message if the thread is about to disappear from inactivity within an hour')
 		.setDMPermission(false)
 		.addBooleanOption((option) => option
 			.setName('ghost')
-			.setDescription('Ghost heartbeat; delete heartbeat message after 5 seconds')
+			.setDescription('Delete heartbeat message after 5 seconds (default: false)')
 		);
 
 	db.exec("CREATE TABLE IF NOT EXISTS heartbeat_enrolled ('threadID' text, 'ghostEnabled' integer, PRIMARY KEY('threadID'))");

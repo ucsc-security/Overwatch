@@ -9,7 +9,7 @@ async function invoke(_oldThread, newThread) {
 		const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(newThread.id);
 		if (enrolled) {
 			db.prepare('DELETE FROM heartbeat_enrolled WHERE threadID = ?').run(newThread.id);
-			console.log(`Unenrolled thread ${newThread.name} <#${newThread.id}> due to archival`);
+			console.log(`Heartbeat: Unenrolled thread ${newThread.name} <#${newThread.id}> due to archival`);
 		}
 	}
 }

@@ -51,7 +51,7 @@ const invoke = async (interaction) => {
 					content: `Success! Your Imaginary CTF account link has been updated to ${websiteUser}.`,
 					ephemeral: true,
 				});
-				console.log(`Updated linked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) to ${websiteUser} (${ictfAccountID})`);
+				console.log(`link-iCTF: Updated linked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) to ${websiteUser} (${ictfAccountID})`);
 				return;
 			}
 			// If the user is not linked, link them
@@ -60,7 +60,7 @@ const invoke = async (interaction) => {
 				content: `Success! Your Imaginary CTF account has been linked to ${websiteUser}.`,
 				ephemeral: true,
 			});
-			console.log(`Linked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) to ${websiteUser} (${ictfAccountID})`);
+			console.log(`link-iCTF: Linked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) to ${websiteUser} (${ictfAccountID})`);
 			return;
 		} else {
 			// If the account ID resulted in an error/no data
@@ -83,7 +83,7 @@ const invoke = async (interaction) => {
 				content: 'You have successfully unlinked your iCTF account!',
 				ephemeral: true,
 			});
-			console.log(`Unlinked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id})`);
+			console.log(`link-iCTF: Unlinked account for ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id})`);
 			return;
 		}
 

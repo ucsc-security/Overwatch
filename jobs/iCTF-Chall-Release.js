@@ -67,7 +67,7 @@ const announceChallengeRelease = async (client, challenge) => {
 			reason : 'New challenge released!',
 			appliedTags: mapCategoryToTag(challenge.category, channel),
 		}).then(async thread => {
-			console.log(`Created thread ${thread.id} for challenge ${challenge.id}`);
+			console.log(`iCTF-Release: Created thread ${thread.id} for challenge ${challenge.id}`);
 			db.prepare('INSERT INTO challenge_threads (ChallengeID, ThreadID) VALUES (?, ?)').run(challenge.id, thread.id);
 		});
 	});
@@ -81,7 +81,7 @@ const checkForNewChallenges = async (client) => {
 			const existingChallenge = db.prepare('SELECT * FROM challenge_threads WHERE ChallengeID = ?').get(challengeID);
 			
 			if (!existingChallenge) {
-				console.log(`New challenge released! ${challenge.title} - ${challenge.id}`);
+				console.log(`iCTF-Release: New challenge released! ${challenge.title} - ${challenge.id}`);
 				announceChallengeRelease(client, challenge);
 			}
 		}
@@ -90,9 +90,11 @@ const checkForNewChallenges = async (client) => {
 
 export default (client) => {
 	// Run the job immediately on startup
+	console.log('iCTF-Release: Checking for new challenges...');
 	checkForNewChallenges(client);
 	// Schedule the job to run once every hour
 	cron.schedule('0 * * * *', async () => {
+		console.log('iCTF-Release: Hourly check for new challenges...');
 		checkForNewChallenges(client);
 	});
 };

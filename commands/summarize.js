@@ -57,7 +57,7 @@ const invoke = async (interaction) => {
 	});
 
 	try {
-		console.log(`Summarizing ${num_messages} messages...`);
+		console.log(`Summarize: Summarizing ${num_messages} messages...`);
 		await interaction.deferReply();
 
 		if (messages_text.length < 50 || messages_text.length > 10000) {
@@ -72,7 +72,7 @@ const invoke = async (interaction) => {
 
 		const response = completion.data.choices[0].message.content;
 		await interaction.editReply(response || 'No response from OpenAI! Try again later or less messages.');
-		console.log(`User ${interaction.member.displayName} summarized ${num_messages} messages (length of ${messages_text.length}), interaction costed ${completion.data.usage.total_tokens} tokens. Estimated cost: $${completion.data.usage.total_tokens * TOKEN_RATE}`);
+		console.log(`Summarize: User ${interaction.member.displayName} summarized ${num_messages} messages (length of ${messages_text.length}), interaction costed ${completion.data.usage.total_tokens} tokens. Estimated cost: $${completion.data.usage.total_tokens * TOKEN_RATE}`);
 	} catch (error) {
 		console.log(error);
 	}

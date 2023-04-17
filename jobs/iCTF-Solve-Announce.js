@@ -34,7 +34,7 @@ const announceChallengeSolved = async (client, user, challenge) => {
 			});
 			db.prepare('INSERT INTO solves_announced (UserID, ChallengeID) VALUES (?, ?)').run(user.iCTFAccountID, challenge.id);
 
-			console.log(`Announced <@${user.discordUserID}> (${user.iCTFAccountID}) solved ${challenge.id} - "${challenge.title}" in <#${threadID}>`);
+			console.log(`iCTF-Announce: Announced <@${user.discordUserID}> (${user.iCTFAccountID}) solved ${challenge.id} - "${challenge.title}" in <#${threadID}>`);
 		} else {
 			console.error(`Failed to get thread for ${challenge.title} - ${challenge.id}`);
 		}
@@ -67,9 +67,11 @@ const findNewSolvers = async (client) => {
 
 export default (client) => {
 	// Run on startup
+	console.log('iCTF-Announce: Checking for new solves...');
 	findNewSolvers(client);
 	// Run every minute
-	cron.schedule('* * * * *', () => {
+	cron.schedule('* * * * *', async () => {
+		// no log due to frequency
 		findNewSolvers(client);
 	});
 };

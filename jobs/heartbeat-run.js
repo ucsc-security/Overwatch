@@ -11,7 +11,7 @@ const HEARTBEAT_MSG = {
 async function sendHeartbeat(thread, ghost) {
 	const msg = await thread.send(HEARTBEAT_MSG);
 
-	console.log(`Sent heartbeat to <#${thread.id}> with ghost mode set to ${ghost}`);
+	console.log(`Heartbeat: Sent heartbeat to <#${thread.id}> ${ghost ? 'with ghost mode enabled' : ''}`);
 
 	// delete heartbeat message after 5 seconds if ghost heartbeat
 	if (ghost)
@@ -27,7 +27,7 @@ async function pacemaker(client) {
 		const thread = await client.channels.fetch(threadID);
 
 		if (!thread) {
-			console.log(`Failed to fetch thread <#${threadID}>`);
+			console.log(`Heartbeat: Failed to fetch thread <#${threadID}>`);
 			continue;
 		}
 
@@ -46,10 +46,12 @@ async function pacemaker(client) {
 
 
 export default (client) => {
+	console.log('Heartbeat: Running pacemaker...')
 	// Run the job immediately on startup
 	pacemaker(client);
 	// Schedule the job to run once every hour
 	cron.schedule('0 * * * *', async () => {
+		console.log('Heartbeat: Running hourly pacemaker...');
 		pacemaker(client);
 	});
 }

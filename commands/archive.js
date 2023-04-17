@@ -62,7 +62,8 @@ const invoke = (interaction) => {
 		content: 'Channel archived!',
 		ephemeral: true,
 	});
-	
+
+	console.log(`Archive: User ${interaction.user.username} archived channel ${interaction.channel.name} in ${interaction.channel.parent.name}`);
 	//interaction.channel.lockPermissions();
 };
 

@@ -35,14 +35,14 @@ const invoke = (interaction) => {
 			content: `<#${threadID}> unenrolled from Heartbeat! 💔`
 		});
 
-		console.log(`<#${threadID}> has been unenrolled from Heartbeat`);
+		console.log(`Heartbeat: <#${threadID}> has been unenrolled from Heartbeat`);
 	} else {
 		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghostEnabled) VALUES (?, ?)').run(threadID, ghost ? 1 : 0);
 		interaction.reply({
-			content: `<#${threadID}> has been enrolled into Heartbeat with ghost mode set to ${ghost}! 💓`
+			content: `<#${threadID}> has been enrolled into Heartbeat ${ghost ? 'with ghost mode enabled' : ''}! 💓`
 		});
 
-		console.log(`<#${threadID}> has been enrolled into Heartbeat with ghost mode set to ${ghost}`);
+		console.log(`Heartbeat: <#${threadID}> has been enrolled into Heartbeat ${ghost ? 'with ghost mode enabled' : ''}`);
 	}
 }
 

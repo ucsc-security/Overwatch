@@ -8,7 +8,7 @@ async function invoke(thread) {
 	const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(thread.id);
 	if (enrolled) {
 		db.prepare('DELETE FROM heartbeat_enrolled WHERE threadID = ?').run(thread.id);
-		console.log(`Unenrolled thread ${thread.name} <#${thread.id}> due to deletion`);
+		console.log(`Heartbeat: Unenrolled thread ${thread.name} <#${thread.id}> due to deletion`);
 	}
 }
 

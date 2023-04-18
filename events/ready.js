@@ -22,16 +22,16 @@ async function invoke(client) {
 	}
 
 	client.application.commands.set(commandsArray);
-	console.log('Commands fetched and loaded!')
+	console.log('Commands fetched and loaded!');
 
-	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityType.Watching }], status: 'online' }); 
+	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityType.Watching }], status: 'online' });
 	console.log(`Successfully logged in as ${client.user.tag}!`);
 
-	console.log(`Loaded ${commands.length} commands!`)
-	for (let command of commands) {
-		console.log(`"${commandsArray[commands.indexOf(command)].name}", description: ${commandsArray[commands.indexOf(command)].description}`);
-	} 
-	
+	console.log(`Loaded ${commandsArray.length} commands!`);
+	for (let command of commandsArray) {
+		console.log(`"${command.name}", description: ${command.description}`);
+	}
+
 	// Jobs
 	console.log('Fetching jobs...');
 	const jobs = fs

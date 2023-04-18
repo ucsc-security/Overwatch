@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { ActivityType } from 'discord.js';
+import {} from 'dotenv/config';
 
 const once = true;
 const name = 'ready';
@@ -15,7 +16,9 @@ async function invoke(client) {
 
 	for (let command of commands) {
 		const commandFile = await import(`#commands/${command}`);
-		commandsArray.push(commandFile.create());
+		const cmd = commandFile.create();
+		cmd.name = (process.env.dev == 'true') ? `dev-${cmd.name}` : cmd.name;
+		commandsArray.push(cmd);
 	}
 
 	client.application.commands.set(commandsArray);
@@ -26,7 +29,7 @@ async function invoke(client) {
 
 	console.log(`Loaded ${commands.length} commands!`)
 	for (let command of commands) {
-		console.log(`"${command}", description: ${commandsArray[commands.indexOf(command)].description}`);
+		console.log(`"${commandsArray[commands.indexOf(command)].name}", description: ${commandsArray[commands.indexOf(command)].description}`);
 	} 
 	
 	// Jobs

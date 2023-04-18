@@ -55,7 +55,7 @@ const invoke = (interaction) => {
 			content: 'This channel has no parent category!', 
 			ephemeral: true 
 		});
-		return
+		return;
 	}
 	
 	interaction.reply({

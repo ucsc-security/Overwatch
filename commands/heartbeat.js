@@ -24,8 +24,8 @@ const invoke = (interaction) => {
 		});
 		return;
 	}
-	
-	let threadID = interaction.channelId;
+
+	const threadID = interaction.channelId;
 	const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(threadID);
 	const ghost = interaction.options.getBoolean('ghost') ?? false;
 

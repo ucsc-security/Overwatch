@@ -1,11 +1,17 @@
+import {} from 'dotenv/config';
+
 const once = false;
 const name = 'interactionCreate';
 
 async function invoke(interaction) {
-	// Check if the interaction is a command and call the invoke method in the corresponding file
-	// The #commands ES6 import-abbreviation is defined in the package.json
-	if (interaction.isChatInputCommand())
-		(await import(`#commands/${interaction.commandName}`)).invoke(interaction);
+	const commandName = (process.env.dev === 'true')
+		? interaction.commandName.replace(/^dev-/, '')
+		: interaction.commandName;
+
+	if (interaction.isChatInputCommand()) {
+		const commandFile = await import(`#commands/${commandName}`);
+		commandFile.invoke(interaction);
+	}
 }
 
 export { once, name, invoke };

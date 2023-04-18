@@ -8,11 +8,15 @@ const create = () => {
 	return command.toJSON();
 };
 
-const invoke = (interaction) => {
-	interaction.reply({
-		content: 'Pong! ' + interaction.client.ws.ping + 'ms',
-		ephemeral: true,
-	});
+
+const invoke = async (interaction) => {
+	const startTime = Date.now();
+
+	await interaction.deferReply({ ephemeral: true });
+
+	const latency = Date.now() - startTime;
+
+	interaction.editReply(`🏓 Pong! Latency: **${latency}ms**. API Latency: **${interaction.client.ws.ping}ms.**`);
 };
 
 export { create, invoke };

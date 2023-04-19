@@ -1,15 +1,16 @@
-import { SlashCommandBuilder, Collection  } from 'discord.js';
-import { } from 'dotenv/config';
+import { SlashCommandBuilder, Collection } from 'discord.js';
+import { OpenAIApi, Configuration } from 'openai';
+import {} from 'dotenv/config';
+
 const PROMPT = 'Using bullet points, summarize in detail (do not directly mention the time) the following messages:';
 const TOKEN_RATE = 0.002 / 1000; // $0.002 / 1K tokens
+const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
-import { Configuration, OpenAIApi } from "openai";
 const openai = new OpenAIApi(new Configuration({
-	apiKey: process.env.openai_token,
+  apiKey: process.env.openai_token,
 }));
 
-const cooldownCollection = new Collection();
-const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
+const cooldowns = new Collection();
 
 const create = () => {
 	const command = new SlashCommandBuilder()
@@ -30,16 +31,16 @@ const create = () => {
 const invoke = async (interaction) => {
 	let num_messages = interaction.options.getInteger('num_messages');
 
-	if (!interaction.member.permissions.has('ADMINISTRATOR') && cooldownCollection.has(interaction.user.id)) {
-		const timeLeft = (cooldownCollection.get(interaction.user.id) - Date.now());
+	if (!interaction.member.permissions.has('ADMINISTRATOR') && cooldowns.has(interaction.user.id)) {
+		const timeLeft = (cooldowns.get(interaction.user.id) - Date.now());
 		interaction.reply({
 			content: `You are on cooldown! Try again in <t:${Math.round(Date.now() / 1000) + Math.round(timeLeft / 1000)}:R>`,
 			ephemeral: true,
 		});
 		return;
 	}
-	cooldownCollection.set(interaction.user.id, Date.now() + COOLDOWN_MS);
-	setTimeout(() => cooldownCollection.delete(interaction.user.id), COOLDOWN_MS);
+	cooldowns.set(interaction.user.id, Date.now() + COOLDOWN_MS);
+	setTimeout(() => cooldowns.delete(interaction.user.id), COOLDOWN_MS);
 
 	let messages_text = '';
 	await interaction.channel.messages.fetch({ limit: num_messages }).then((messages) => {

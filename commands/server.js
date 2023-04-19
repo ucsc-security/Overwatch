@@ -3,9 +3,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 const create = () => {
 	const command = new SlashCommandBuilder()
 		.setName('server')
-		.setDescription(
-			'Replys with a small amount of information about this server!'
-		)
+		.setDescription('Replies with a small amount of information about this server!')
 		.setDMPermission(false);
 
 	return command.toJSON();

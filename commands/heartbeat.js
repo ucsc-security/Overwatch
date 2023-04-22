@@ -1,6 +1,14 @@
 import { SlashCommandBuilder } from 'discord.js';
 import Database from 'better-sqlite3';
+
 const db = new Database('server.db');
+db.exec(`
+	CREATE TABLE IF NOT EXISTS heartbeat_enrolled (
+		'threadID' text,
+		'ghostEnabled' integer,
+		PRIMARY KEY('threadID')
+	)
+`);
 
 const create = () => {
 	const command = new SlashCommandBuilder()
@@ -12,7 +20,6 @@ const create = () => {
 			.setDescription('Delete heartbeat message after 5 seconds (default: false)')
 		);
 
-	db.exec("CREATE TABLE IF NOT EXISTS heartbeat_enrolled ('threadID' text, 'ghostEnabled' integer, PRIMARY KEY('threadID'))");
 	return command.toJSON();
 }
 

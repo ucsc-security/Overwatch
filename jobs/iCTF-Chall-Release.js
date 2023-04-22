@@ -7,7 +7,13 @@ import { } from 'dotenv/config';
 const ICTF_FORUM_CHANNEL_ID = process.env.iCTF_forum_channelID;
 
 const db = new Database('iCTF.db');
-db.exec("CREATE TABLE IF NOT EXISTS challenge_threads ('ChallengeID' text, 'ThreadID' text, PRIMARY KEY('ChallengeID'))");
+db.exec(`
+	CREATE TABLE IF NOT EXISTS challenge_threads (
+		'ChallengeID' text,
+		'ThreadID' text,
+		PRIMARY KEY('ChallengeID')
+	)
+`);
 
 const API_BASE_URL = 'https://imaginaryctf.org/api/challenges/released';
 

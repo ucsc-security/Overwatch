@@ -3,6 +3,14 @@ import Database from 'better-sqlite3';
 import fetch from 'node-fetch';
 
 const db = new Database('iCTF.db');
+db.exec(`
+	CREATE TABLE IF NOT EXISTS linked_accounts (
+		'discordUserID' text,
+		'iCTFAccountID' integer,
+		PRIMARY KEY('discordUserID')
+	)
+`);
+
 const API_BASE_URL = 'https://imaginaryctf.org/api/solves/byuserid/';
 
 const MESSAGES = {
@@ -44,7 +52,6 @@ const create = () => {
 		)
 		.setDMPermission(false);
 
-	db.exec("CREATE TABLE IF NOT EXISTS linked_accounts ('discordUserID' text, 'iCTFAccountID' integer, PRIMARY KEY('discordUserID'))");
 	return command.toJSON();
 };
 

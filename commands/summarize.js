@@ -41,13 +41,13 @@ const formatMessages = (messages) => {
 	return messages.map((message) => {
 		const author = message.member ? message.member.displayName : message.author.username;
 		const time = message.createdAt.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit' });
-		const content = message.content + (message.attachments.size > 0 ? ` <attached a file \"${message.attachments.first().name}\">` : '');
+		const content = message.content + (message.attachments.size > 0 ? ` <attached a file "${message.attachments.first().name}">` : '');
 
 		return `${author} at ${time}: ${content}\n`;
 	}).join('');
 };
 
-const generateSummary = async (messages_text) => {
+const generateGPTSummary = async (messages_text) => {
 	try {
 		const completion = await openai.createChatCompletion({
 			model: "gpt-3.5-turbo",
@@ -85,7 +85,7 @@ const invoke = async (interaction) => {
 		return;
 	}
 
-	const completion = await generateSummary(messages_text);
+	const completion = await generateGPTSummary(messages_text);
 	const response = completion.data.choices[0].message.content;
 	await interaction.editReply(response || 'No response from OpenAI! Try again later or with fewer messages.');
 

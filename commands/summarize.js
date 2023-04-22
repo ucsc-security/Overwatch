@@ -7,7 +7,7 @@ const TOKEN_RATE = 0.002 / 1000; // $0.002 / 1K tokens
 const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 const openai = new OpenAIApi(new Configuration({
-  apiKey: process.env.openai_token,
+	apiKey: process.env.openai_token,
 }));
 
 const cooldowns = new Collection();
@@ -28,8 +28,40 @@ const create = () => {
 	return command.toJSON();
 }
 
+const fetchMessages = async (channel, num_messages) => {
+	try {
+		const messages = await channel.messages.fetch({ limit: num_messages });
+		return messages.reverse(); // reverse so oldest messages are first
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const formatMessages = (messages) => {
+	return messages.map((message) => {
+		const author = message.member ? message.member.displayName : message.author.username;
+		const time = message.createdAt.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit' });
+		const content = message.content + (message.attachments.size > 0 ? ` <attached a file \"${message.attachments.first().name}\">` : '');
+
+		return `${author} at ${time}: ${content}\n`;
+	}).join('');
+};
+
+const generateSummary = async (messages_text) => {
+	try {
+		const completion = await openai.createChatCompletion({
+			model: "gpt-3.5-turbo",
+			messages: [{ role: "user", content: `${PROMPT}\n${messages_text}` }],
+		});
+
+		return completion;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 const invoke = async (interaction) => {
-	let num_messages = interaction.options.getInteger('num_messages');
+	const num_messages = interaction.options.getInteger('num_messages');
 
 	if (!interaction.member.permissions.has('ADMINISTRATOR') && cooldowns.has(interaction.user.id)) {
 		const timeLeft = (cooldowns.get(interaction.user.id) - Date.now());
@@ -42,41 +74,22 @@ const invoke = async (interaction) => {
 	cooldowns.set(interaction.user.id, Date.now() + COOLDOWN_MS);
 	setTimeout(() => cooldowns.delete(interaction.user.id), COOLDOWN_MS);
 
-	let messages_text = '';
-	await interaction.channel.messages.fetch({ limit: num_messages }).then((messages) => {
-		messages = messages.reverse();
+	const messages = await fetchMessages(interaction.channel, num_messages);
+	const messages_text = formatMessages(messages);
 
-		messages.forEach((message) => {
-			var author = message.member ? message.member.displayName : message.author.username;
-			var time = message.createdAt.toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour12: false, hour: '2-digit', minute: '2-digit' });
-			var content = message.content + (message.attachments.size > 0 ? ` <attached a file \"${message.attachments.first().name}\">` : '');
+	console.log(`Summarize: User ${interaction.member.displayName} is summarizing ${num_messages} messages (${messages_text.length} characters)...`);
+	await interaction.deferReply();
 
-			messages_text += `${author} at ${time}: ${content}\n`;
-		});
-	}).catch((error) => {
-		console.log(error);
-	});
-
-	try {
-		console.log(`Summarize: Summarizing ${num_messages} messages...`);
-		await interaction.deferReply();
-
-		if (messages_text.length < 50 || messages_text.length > 10000) {
-			interaction.editReply(`Error! Something went wrong with fetching messages, length was ${messages_text.length}, expected between 50 and 10000.`);
-			return;
-		}
-
-		const completion = await openai.createChatCompletion({
-			model: "gpt-3.5-turbo",
-			messages: [{ role: "user", content: `${PROMPT}\n${messages_text}` }],
-		});
-
-		const response = completion.data.choices[0].message.content;
-		await interaction.editReply(response || 'No response from OpenAI! Try again later or less messages.');
-		console.log(`Summarize: User ${interaction.member.displayName} summarized ${num_messages} messages (length of ${messages_text.length}), interaction costed ${completion.data.usage.total_tokens} tokens. Estimated cost: $${completion.data.usage.total_tokens * TOKEN_RATE}`);
-	} catch (error) {
-		console.log(error);
+	if (messages_text.length < 50 || messages_text.length > 10000) {
+		interaction.editReply(`Error! Something went wrong with fetching messages, length was ${messages_text.length}, expected between 50 and 10000.`);
+		return;
 	}
-}
+
+	const completion = await generateSummary(messages_text);
+	const response = completion.data.choices[0].message.content;
+	await interaction.editReply(response || 'No response from OpenAI! Try again later or with fewer messages.');
+
+	console.log(`Summarize: User ${interaction.member.displayName} summarized ${num_messages} messages (${messages_text.length} characters), interaction costed ${completion.data.usage.total_tokens} tokens. Estimated cost: $${completion.data.usage.total_tokens * TOKEN_RATE}`);
+};
 
 export { create, invoke };

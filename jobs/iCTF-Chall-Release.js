@@ -11,6 +11,7 @@ db.exec(`
 	CREATE TABLE IF NOT EXISTS challenge_threads (
 		'ChallengeID' text,
 		'ThreadID' text,
+		'WriteupPosted' BOOLEAN DEFAULT 0,
 		PRIMARY KEY('ChallengeID')
 	)
 `);
@@ -54,7 +55,7 @@ const announceChallengeRelease = async (client, challenge) => {
 		)
 		.setFooter({ text: `#${challenge.id}` })
 		.setTimestamp(new Date(challenge.release_date));
-		
+
 		const embedColor = 	challenge.points < 45 ? '#00ff00' : // green
 							challenge.points < 75 ? '#ffff00' : // yellow
 							challenge.points < 150 ? '#ff9900' : // orange

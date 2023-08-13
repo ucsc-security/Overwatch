@@ -40,4 +40,4 @@ for (let event of events) {
 console.log('Events fetched!');
 
 console.log('Logging in...');
-client.login(process.env.bot_token);
+client.login(process.env.BOT_TOKEN);

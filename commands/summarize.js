@@ -7,7 +7,7 @@ const TOKEN_RATE = 0.002 / 1000; // $0.002 / 1K tokens
 const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 const openai = new OpenAIApi(new Configuration({
-	apiKey: process.env.openai_token,
+	apiKey: process.env.OPENAI_TOKEN,
 }));
 
 const cooldowns = new Collection();

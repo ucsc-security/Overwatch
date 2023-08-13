@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import Database from 'better-sqlite3';
 import { } from 'dotenv/config';
 
-const ICTF_FORUM_CHANNEL_ID = process.env.iCTF_forum_channelID;
+const ICTF_FORUM_CHANNEL_ID = process.env.ICTF_FORUM_CHANNELID;
 
 const db = new Database('iCTF.db');
 db.exec(`

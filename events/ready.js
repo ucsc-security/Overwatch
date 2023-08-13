@@ -17,7 +17,7 @@ async function invoke(client) {
 	for (let command of commands) {
 		const commandFile = await import(`#commands/${command}`);
 		const cmd = commandFile.create();
-		cmd.name = (process.env.dev == 'true') ? `dev-${cmd.name}` : cmd.name;
+		cmd.name = (process.env.DEV == 'true') ? `dev-${cmd.name}` : cmd.name;
 		commandsArray.push(cmd);
 	}
 

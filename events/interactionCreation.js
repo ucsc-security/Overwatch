@@ -4,7 +4,7 @@ const once = false;
 const name = 'interactionCreate';
 
 async function invoke(interaction) {
-	const commandName = (process.env.dev === 'true')
+	const commandName = (process.env.DEV === 'true')
 		? interaction.commandName.replace(/^dev-/, '')
 		: interaction.commandName;
 

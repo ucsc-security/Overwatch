@@ -1,15 +1,22 @@
-## Project setup
+## Setting up development environment
 
-Clone the repository and install the dependencies:
-
-```sh
-git clone https://github.com/SlugSecurity/Overwatch.git && cd Overwatch
-
-npm install
+### 1. Install required tools:
+```
+$ sudo apt install npm
 ```
 
-Create a `.env` file in the root directory of the project and fill in the variables found in `.env.example`.
+### 2. Install the dependencies:
+```
+$ npm install
+```
 
-```sh
-node index.js
+### 3. Setting up the environment variables:
+```
+$ cp .env.example .env
+```
+Fill in the environment variables in the .env file.
+
+### 4. Run the application:
+```
+$ node index.js
 ```

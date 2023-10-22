@@ -2,7 +2,7 @@ import Database from 'better-sqlite3'
 import cron from 'node-cron';
 import { MessageFlags } from 'discord.js';
 
-const db = new Database('server.db');
+const db = new Database('databases/server.db');
 const HEARTBEAT_MSG = {
 	content: 'Heartbeat 💓',
 	flags: MessageFlags.SuppressNotifications

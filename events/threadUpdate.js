@@ -2,7 +2,7 @@ const once = false;
 const name = 'threadUpdate';
 
 import Database from 'better-sqlite3';
-const db = new Database('server.db');
+const db = new Database('databases/server.db');
 
 async function invoke(_oldThread, newThread) {
 	if (newThread.archived) {

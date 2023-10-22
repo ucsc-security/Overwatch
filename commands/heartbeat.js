@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import Database from 'better-sqlite3';
 
-const db = new Database('server.db');
+const db = new Database('databases/server.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS heartbeat_enrolled (
 		'threadID' text,

@@ -6,7 +6,7 @@ import { MessageFlags } from 'discord.js';
 const API_BASE_URL = 'https://imaginaryctf.org/api/solves/byuserid/';
 const API_CHALLENGES_URL = 'https://imaginaryctf.org/api/challenges/released';
 
-const db = new Database('iCTF.db');
+const db = new Database('databases/iCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS solves_announced (
 		'UserID' text, 

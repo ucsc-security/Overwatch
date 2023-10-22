@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import Database from 'better-sqlite3';
 import cron from 'node-cron';
 
-const db = new Database('iCTF.db');
+const db = new Database('databases/iCTF.db');
 const API_ARCHIVED_CHALLENGES_URL = 'https://imaginaryctf.org/api/challenges/archived';
 
 const getArchivedChallenges = async () => {

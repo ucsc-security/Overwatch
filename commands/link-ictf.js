@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import Database from 'better-sqlite3';
 import fetch from 'node-fetch';
 
-const db = new Database('iCTF.db');
+const db = new Database('databases/iCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS linked_accounts (
 		'discordUserID' text,

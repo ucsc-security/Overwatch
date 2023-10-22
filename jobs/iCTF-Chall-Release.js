@@ -6,7 +6,7 @@ import { } from 'dotenv/config';
 
 const ICTF_FORUM_CHANNEL_ID = process.env.ICTF_FORUM_CHANNELID;
 
-const db = new Database('iCTF.db');
+const db = new Database('databases/iCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS challenge_threads (
 		'ChallengeID' text,

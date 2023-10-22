@@ -1,14 +1,14 @@
 import { SlashCommandBuilder, Collection } from 'discord.js';
-import { OpenAIApi, Configuration } from 'openai';
+import OpenAI from 'openai';
 import {} from 'dotenv/config';
 
 const PROMPT = 'Using bullet points, summarize in detail (do not directly mention the time) the following messages:';
 const TOKEN_RATE = 0.002 / 1000; // $0.002 / 1K tokens
 const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
-const openai = new OpenAIApi(new Configuration({
+const openai = new OpenAI({
 	apiKey: process.env.OPENAI_TOKEN,
-}));
+});
 
 const cooldowns = new Collection();
 

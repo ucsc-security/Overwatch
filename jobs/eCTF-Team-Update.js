@@ -167,8 +167,8 @@ export default (client) => {
 	// Run the job immediately on startup
 	console.log('eCTF-Teams-Update: Checking for new scores...');
 	updateAndCheck(client);
-	// Schedule the job to run once every minute
-	cron.schedule('0 0 * * * *', () => {
+	// Schedule the job to run once every minute (be nice to the eCTF server)
+	cron.schedule('* * * * *', () => {
 		console.log('eCTF-Teams-Update: Checking for new scores...');
 		updateAndCheck(client);
 	});

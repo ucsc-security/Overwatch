@@ -25,6 +25,7 @@ db.exec(`
 		'ChallengeID' text,
 		'ChallengeName' text,
 		'Points' integer,
+		'ChallengeOwner' text,
 		PRIMARY KEY('TeamID', 'ChallengeID')
 	)
 `);
@@ -37,6 +38,7 @@ async function updateAndCheck(client) {
 		updateScoreRank(teamId, team);
 
 		if (scoreChanged(team.score, oldScore)) {
+			console.log(`Score change detected for ${team.name} <${teamId}>: ${oldScore} -> ${team.score}`);
 			await checkChallenges(client, teamId, team.name, team.rank, oldRank);
 		}
 	}
@@ -53,14 +55,20 @@ function updateScoreRank(teamId, team) {
 	updateStmt.run(teamId, team.name, team.score, team.rank);
 }
 
-function challengeExists(teamId, challengeId) {
-	const checkStmt = db.prepare('SELECT 1 FROM ectf_challenges WHERE TeamID = ? AND ChallengeID = ?');
-	return checkStmt.get(teamId, challengeId) != null;
+function challengeExists(teamId, challengeId, challengeOwner) {
+	const checkStmt = db.prepare('SELECT 1 FROM ectf_challenges WHERE TeamID = ? AND ChallengeID = ? AND ChallengeOwner = ?');
+	return checkStmt.get(teamId, challengeId, challengeOwner) != null;
 }
 
 function insertChallenge(teamId, challenge) {
-	const insertStmt = db.prepare('INSERT INTO ectf_challenges (TeamID, ChallengeID, ChallengeName, Points) VALUES (?, ?, ?, ?)');
-	insertStmt.run(teamId, challenge.challengeId, challenge.challengeName, challenge.points);
+	const insertStmt = db.prepare('INSERT INTO ectf_challenges (TeamID, ChallengeID, ChallengeName, Points, ChallengeOwner) VALUES (?, ?, ?, ?, ?)');
+	insertStmt.run(teamId, challenge.challengeId, challenge.challengeName, challenge.points, challenge.flagOwner);
+}
+
+function findTeamIdFromName(teamName) {
+	const stmt = db.prepare('SELECT TeamID FROM ectf_teams WHERE TeamName = ?');
+	const row = stmt.get(teamName);
+	return row ? row.TeamID : null;
 }
 
 function scoreChanged(newScore, oldScore) {
@@ -70,7 +78,7 @@ function scoreChanged(newScore, oldScore) {
 async function checkChallenges(client, teamId, teamName, newRank, oldRank) {
 	const challenges = await fetchChallenges(teamId);
 	challenges.forEach(challenge => {
-		if (!challengeExists(teamId, challenge.challengeId)) {
+		if (!challengeExists(teamId, challenge.challengeId, challenge.flagOwner)) {
 			insertChallenge(teamId, challenge);
 			announce(client, teamId, teamName, challenge, newRank, oldRank);
 		}
@@ -113,17 +121,23 @@ async function fetchChallenges(teamID) {
 		const $ = cheerio.load(htmlString);
 		const challenges = [];
 
-		$('table tr').each((index, element) => {
-			if (index === 0) return;
-			const challengeLink = $(element).find('td a').attr('href');
-			const challengeIdMatch = /\/game\/challenges\/(\d+)/.exec(challengeLink);
-			const challengeId = challengeIdMatch ? challengeIdMatch[1] : null;
-			const challengeName = $(element).find('td').first().text().trim();
-			const points = parseInt($(element).find('td:nth-child(2)').text().trim(), 10);
+		$('table tbody').each((tbodyIndex, tbody) => {
+			$(tbody).find('tr').each((trIndex, element) => {
+				if (tbodyIndex === 0 && trIndex === 0) return;
 
-			if (challengeId) {
-				challenges.push({ challengeId, challengeName, points });
-			}
+				const challengeLink = $(element).find('td a').attr('href');
+				const challengeIdMatch = /(\d+)$/.exec(challengeLink);
+				const challengeId = challengeIdMatch ? challengeIdMatch[1] : null;
+
+				const challengeName = $(element).find('td').first().text().trim();
+				const points = parseInt($(element).find('td:nth-child(2)').text().trim(), 10);
+
+				const flagOwner = $(element).find('td:nth-child(3)').text().trim();
+
+				if (challengeId) {
+					challenges.push({ challengeId, challengeName, points, flagOwner });
+				}
+			});
 		});
 
 		return challenges;
@@ -140,16 +154,27 @@ async function announce(client, teamId, teamName, challenge, newRank, oldRank) {
 		const rankChangeSymbol = rankChange > 0 ? '+' : '-';
 		rankChangeMsg += ` (${rankChangeSymbol}${Math.abs(rankChange)})`;
 	}
+	const flagOwnerId = findTeamIdFromName(challenge.flagOwner);
 
-	const teamSummaryUrl = `https://sb.ectf.mitre.org/teams/${teamId}/summary`;
-	const challengeUrl = `https://sb.ectf.mitre.org/game/challenges/${challenge.challengeId}`;
+	let description;
+	if (flagOwnerId !== null) {
+		let teamSummaryUrl = `https://sb.ectf.mitre.org/teams/${teamId}/summary`;
+		let flagOwnerUrl = `https://sb.ectf.mitre.org/teams/${flagOwnerId}/summary`;
+		let challengeUrl = `https://sb.ectf.mitre.org/game/teams/${flagOwnerId}/challenges/${challenge.challengeId}`;
+
+		description = `**[${teamName}](<${teamSummaryUrl}>)** has captured **[${challenge.flagOwner}](<${flagOwnerUrl}>)**'s "**[${challenge.challengeName}](<${challengeUrl}>)**"`
+	} else {
+		let teamSummaryUrl = `https://sb.ectf.mitre.org/teams/${teamId}/summary`;
+		let challengeUrl = `https://sb.ectf.mitre.org/game/challenges/${challenge.challengeId}`;
+		description = `**[${teamName}](<${teamSummaryUrl}>)** has solved "**[${challenge.challengeName}](<${challengeUrl}>)**"`
+	}
 
 	const embedColor = '#00ff00';
 	const embed = new EmbedBuilder()
 		.setTitle(`Challenge Solved by ${teamName}`)
-		.setDescription(`**[${teamName}](<${teamSummaryUrl}>)** has solved "**[${challenge.challengeName}](<${challengeUrl}>)**"`)
+		.setDescription(description)
 		.addFields(
-			{ name: "Points", value: String(challenge.points), inline: true },
+			{ name: "Points Worth", value: String(challenge.points), inline: true },
 			{ name: "Team Rank", value: rankChangeMsg, inline: true }
 		)
 		.setColor(embedColor)

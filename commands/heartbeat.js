@@ -4,8 +4,9 @@ import Database from 'better-sqlite3';
 const db = new Database('databases/server.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS heartbeat_enrolled (
-		'threadID' text,
-		'ghostEnabled' integer,
+		'threadID' TEXT,
+		'ghostEnabled' INTEGER,
+		'lastHeartbeat' INTEGER DEFAULT 0,  -- Add this line for the new column
 		PRIMARY KEY('threadID')
 	)
 `);
@@ -44,7 +45,7 @@ const invoke = (interaction) => {
 
 		console.log(`Heartbeat: <#${threadID}> has been unenrolled from Heartbeat`);
 	} else {
-		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghostEnabled) VALUES (?, ?)').run(threadID, ghost ? 1 : 0);
+		db.prepare('INSERT INTO heartbeat_enrolled (threadID, ghostEnabled, lastHeartbeat) VALUES (?, ?, ?)').run(threadID, ghost ? 1 : 0, Date.now());
 		interaction.reply({
 			content: `<#${threadID}> has been enrolled into Heartbeat ${ghost ? 'with ghost mode enabled' : ''}! 💓`
 		});

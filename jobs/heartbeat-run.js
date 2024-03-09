@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3'
+import Database from 'better-sqlite3';
 import cron from 'node-cron';
 import { MessageFlags } from 'discord.js';
 
@@ -16,6 +16,8 @@ async function sendHeartbeat(thread, ghost) {
 	// delete heartbeat message after 5 seconds if ghost heartbeat
 	if (ghost)
 		setTimeout(() => msg.delete(), 5000);
+
+	db.prepare('UPDATE heartbeat_enrolled SET lastHeartbeat = ? WHERE threadID = ?').run(Date.now(), thread.id);
 }
 
 async function pacemaker(client) {
@@ -23,7 +25,6 @@ async function pacemaker(client) {
 
 	for (const row of enrolledThreads) {
 		const threadID = row.threadID;
-		const ghost = row.ghostEnabled === 1;
 		const thread = await client.channels.fetch(threadID);
 
 		if (!thread) {
@@ -31,19 +32,19 @@ async function pacemaker(client) {
 			continue;
 		}
 
-		const archiveDuration = thread.autoArchiveDuration * 60 * 1000; // Convert to milliseconds
 		const lastMessage = (await thread.messages.fetch({ limit: 1 })).first();
 
-		const lastMessageTimestamp = lastMessage.createdTimestamp;
-		const timeTillArchive = archiveDuration - (Date.now() - lastMessageTimestamp);
+		const lastActionTimestamp = Math.max(lastMessage.createdTimestamp, row.lastHeartbeat);
+
+		const timeSinceLastAction = Date.now() - lastActionTimestamp;
+		const timeTillArchive = (thread.autoArchiveDuration * 60 * 1000) - timeSinceLastAction;
 
 		console.log(`Heartbeat: #${thread.name}: ${(timeTillArchive/1000/60).toFixed(2)} minutes till archive`);
 
-		if (timeTillArchive < 3600000) // Less than 1 hour
-			await sendHeartbeat(thread, ghost);
+		if (timeTillArchive < 3600000) // 1 hour
+			await sendHeartbeat(thread, row.ghostEnabled === 1);
 	}
 }
-
 
 export default (client) => {
 	console.log('Heartbeat: Running pacemaker...')

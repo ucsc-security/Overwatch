@@ -26,7 +26,7 @@ db.exec(`
 		'ChallengeName' text,
 		'Points' integer,
 		'ChallengeOwner' text,
-		PRIMARY KEY('TeamID', 'ChallengeID')
+		PRIMARY KEY('TeamID', 'ChallengeID', 'ChallengeOwner')
 	)
 `);
 

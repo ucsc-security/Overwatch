@@ -6,7 +6,7 @@ db.exec(`
 	CREATE TABLE IF NOT EXISTS heartbeat_enrolled (
 		'threadID' TEXT,
 		'ghostEnabled' INTEGER,
-		'lastHeartbeat' INTEGER DEFAULT 0,  -- Add this line for the new column
+		'lastHeartbeat' INTEGER DEFAULT 0,
 		PRIMARY KEY('threadID')
 	)
 `);

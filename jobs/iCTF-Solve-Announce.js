@@ -9,8 +9,8 @@ const API_CHALLENGES_URL = 'https://imaginaryctf.org/api/challenges/released';
 const db = new Database('databases/iCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS solves_announced (
-		'UserID' text, 
-		'ChallengeID' text, 
+		'UserID' TEXT, 
+		'ChallengeID' TEXT, 
 		PRIMARY KEY('UserID', 'ChallengeID')
 	)
 `);

@@ -12,20 +12,20 @@ const MIN_SCORE_DELTA = 20;
 const db = new Database('databases/eCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS ectf_teams (
-		'TeamID' text,
-		'TeamName' text,
-		'Score' integer,
-		'Rank' integer,
+		'TeamID' TEXT,
+		'TeamName' TEXT,
+		'Score' INTEGER,
+		'Rank' INTEGER,
 		PRIMARY KEY('TeamID')
 	)
 `);
 db.exec(`
 	CREATE TABLE IF NOT EXISTS ectf_challenges (
-		'TeamID' text,
-		'ChallengeID' text,
-		'ChallengeName' text,
-		'Points' integer,
-		'ChallengeOwner' text,
+		'TeamID' TEXT,
+		'ChallengeID' TEXT,
+		'ChallengeName' TEXT,
+		'Points' INTEGER,
+		'ChallengeOwner' TEXT,
 		PRIMARY KEY('TeamID', 'ChallengeID', 'ChallengeOwner')
 	)
 `);

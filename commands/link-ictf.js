@@ -5,8 +5,8 @@ import fetch from 'node-fetch';
 const db = new Database('databases/iCTF.db');
 db.exec(`
 	CREATE TABLE IF NOT EXISTS linked_accounts (
-		'discordUserID' text,
-		'iCTFAccountID' integer,
+		'discordUserID' TEXT,
+		'iCTFAccountID' INTEGER,
 		PRIMARY KEY('discordUserID')
 	)
 `);

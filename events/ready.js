@@ -6,7 +6,7 @@ const once = true;
 const name = 'ready';
 
 async function invoke(client) {
-	console.log('Fetching commands...');
+	console.log('\nFetching commands...');
 	const commands = fs
 		.readdirSync('./commands')
 		.filter((file) => file.endsWith('.js'))
@@ -20,24 +20,25 @@ async function invoke(client) {
 		cmd.name = (process.env.DEV == 'true') ? `dev-${cmd.name}` : cmd.name;
 		commandsArray.push(cmd);
 	}
-
 	client.application.commands.set(commandsArray);
-	console.log('Commands fetched and loaded!');
-
-	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityType.Watching }], status: 'online' });
-	console.log(`Successfully logged in as ${client.user.tag}!`);
-
+	
 	console.log(`Loaded ${commandsArray.length} commands!`);
 	for (let command of commandsArray) {
 		console.log(`"${command.name}", description: ${command.description}`);
 	}
 
 	// Jobs
-	console.log('Fetching jobs...');
+	console.log('\nFetching jobs...');
 	const jobs = fs
 		.readdirSync('./jobs')
 		.filter((file) => file.endsWith('.js'))
 		.map((file) => file.slice(0, -3));
+
+	// Info
+	console.log(`Loaded ${jobs.length} jobs!`);
+	for (let job of jobs) {
+		console.log(`"${job}"`);
+	}
 
 	// Execute the jobs
 	for (let job of jobs) {
@@ -45,7 +46,10 @@ async function invoke(client) {
 		console.log(`Executing job ${job}`);
 		jobFile.default(client);
 	}
-	console.log('Jobs fetched and executed!');
+
+	client.user.setPresence({ activities: [{ name: `over Slug Security`, type: ActivityType.Watching }], status: 'online' });
+	console.log(`\nSuccessfully logged in as ${client.user.tag}!`);
+
 }
 
 export { once, name, invoke };

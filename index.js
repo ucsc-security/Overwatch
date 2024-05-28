@@ -19,7 +19,7 @@ const client = new Client({
 });
 
 // Events
-console.log('Fetching events...');
+console.log('\nFetching events...');
 const events = fs
 	.readdirSync('./events')
 	.filter((file) => file.endsWith('.js'));
@@ -37,7 +37,11 @@ for (let event of events) {
 			eventFile.invoke(...args);
 		});
 }
-console.log('Events fetched!');
 
-console.log('Logging in...');
+console.log(`Loaded ${events.length} events!`);
+for (let event of events) {
+	console.log(`"${event}"`);
+}
+
+console.log('\nLogging in...');
 client.login(process.env.BOT_TOKEN);

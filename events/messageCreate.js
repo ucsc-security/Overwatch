@@ -9,7 +9,7 @@ const openai = new OpenAI({
 	apiKey: process.env.OPENAI_TOKEN,
 });
 
-const PRE_PROMPT = 'You are a discord bot named Overwatch pretending to be a human. Reply in their tone and style, for example, if they are using all lowercase, you should too, same with punctuation in general. Do not be overly formal, randomly make typos.';
+const PRE_PROMPT = 'You are a discord bot named Overwatch pretending to be a human in the Slug Security sever, a UCSC cybersecurity club. Reply in their tone and style, for example, if they are using all lowercase, you should too, same with punctuation in general. Do not be overly formal, randomly make typos. If its a simple greeting, do not say feel free to ask or otherwise similar';
 
 const CHANNEL_CHANCES = JSON.parse(process.env.CHANNEL_CHANCES);
 
@@ -20,7 +20,7 @@ async function invoke(client, message) {
 
 	const userId = message.author.id;
 	if (userCooldowns.has(userId)) {
-		const expirationTime = userCooldowns.get(userId) + 30_000;
+		const expirationTime = userCooldowns.get(userId) + 15_000;
 
 		if (Date.now() < expirationTime) return;
 	}
@@ -32,12 +32,19 @@ async function invoke(client, message) {
 
 	if (botMentioned || randomChance) {
 		try {
+			let messages = [
+				{ role: "system", content: PRE_PROMPT },
+				{ role: "user", content: message.content }
+			];
+
+			if (message.reference) {
+				const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+				if (repliedMessage) messages.splice(1, 0, { role: "user", content: `Replying to: ${repliedMessage.content}` });
+			}
+
 			const response = await openai.chat.completions.create({
 				model: "gpt-3.5-turbo-0125",
-				messages: [
-					{ role: "system", content: PRE_PROMPT },
-					{ role: "user", content: message.content }
-				],
+				messages: messages,
 				max_tokens: botMentioned ? 500 : 150,
 			});
 

@@ -8,7 +8,8 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildMembers
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildScheduledEvents,
 	],
 	partials: [
 		Partials.Channel,
@@ -30,11 +31,11 @@ for (let event of events) {
 	// But first check if it's an event emitted once
 	if (eventFile.once)
 		client.once(eventFile.name, (...args) => {
-			eventFile.invoke(...args);
+			eventFile.invoke(client, ...args);
 		});
 	else
 		client.on(eventFile.name, (...args) => {
-			eventFile.invoke(...args);
+			eventFile.invoke(client, ...args);
 		});
 }
 

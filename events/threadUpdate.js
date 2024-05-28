@@ -4,7 +4,7 @@ const name = 'threadUpdate';
 import Database from 'better-sqlite3';
 const db = new Database('databases/server.db');
 
-async function invoke(_oldThread, newThread) {
+async function invoke(client, _oldThread, newThread) {
 	if (newThread.archived) {
 		const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(newThread.id);
 		if (enrolled) {

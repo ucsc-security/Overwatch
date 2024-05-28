@@ -4,7 +4,7 @@ const name = 'threadDelete';
 import Database from 'better-sqlite3';
 const db = new Database('databases/server.db');
 
-async function invoke(thread) {
+async function invoke(client, thread) {
 	const enrolled = db.prepare('SELECT * FROM heartbeat_enrolled WHERE threadID = ?').get(thread.id);
 	if (enrolled) {
 		db.prepare('DELETE FROM heartbeat_enrolled WHERE threadID = ?').run(thread.id);

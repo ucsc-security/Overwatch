@@ -3,7 +3,7 @@ import {} from 'dotenv/config';
 const once = false;
 const name = 'interactionCreate';
 
-async function invoke(interaction) {
+async function invoke(client, interaction) {
 	const commandName = (process.env.DEV === 'true')
 		? interaction.commandName.replace(/^dev-/, '')
 		: interaction.commandName;

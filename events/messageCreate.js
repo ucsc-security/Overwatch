@@ -32,8 +32,7 @@ async function invoke(client, message) {
 			});
 
 			const reply = response.choices[0].message.content;
-
-			await message.channel.send(reply);
+			if (!reply.includes("@")) await message.channel.send(reply);
 		} catch (error) {
 			console.error('Error interacting with OpenAI API:', error);
 		}

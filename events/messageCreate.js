@@ -1,4 +1,4 @@
-import { Events } from 'discord.js';
+import { Events, Collection } from 'discord.js';
 import OpenAI from 'openai';
 import {} from 'dotenv/config';
 
@@ -13,8 +13,18 @@ const PRE_PROMPT = 'You are a discord bot named Overwatch pretending to be a hum
 
 const CHANNEL_CHANCES = JSON.parse(process.env.CHANNEL_CHANCES);
 
+const userCooldowns = new Collection();
+
 async function invoke(client, message) {
 	if (message.author.bot) return;
+
+	const userId = message.author.id;
+	if (userCooldowns.has(userId)) {
+		const expirationTime = userCooldowns.get(userId) + 30_000;
+
+		if (Date.now() < expirationTime) return;
+	}
+	userCooldowns.set(userId, Date.now());
 
 	const botMentioned = message.mentions.has(client.user);
 	const channelChance = CHANNEL_CHANCES[message.channel.id] || 300;

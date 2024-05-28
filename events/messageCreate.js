@@ -12,21 +12,24 @@ const openai = new OpenAI({
 const PRE_PROMPT = 'You are a discord bot named Overwatch pretending to be a human in the Slug Security sever, a UCSC cybersecurity club. Do not mention you are a bot. Reply in their tone and style, for example, if they are using all lowercase, you should too, same with punctuation in general. Do not be overly formal, randomly make typos. If its a simple greeting, do not say feel free or ask if theres anything else you can do.';
 
 const CHANNEL_CHANCES = JSON.parse(process.env.CHANNEL_CHANCES);
+const DISALLOW_FORCED_CHANNELS = JSON.parse(process.env.DISALLOW_FORCED_CHANNELS);
 
 const userCooldowns = new Collection();
 
 async function invoke(client, message) {
 	if (message.author.bot) return;
 
+	const botMentioned = message.mentions.has(client.user);
+	if (DISALLOW_FORCED_CHANNELS.includes(message.channel.id) && botMentioned) return;
+
 	const userId = message.author.id;
 	if (userCooldowns.has(userId)) {
-		const expirationTime = userCooldowns.get(userId) + 15_000;
+		const expirationTime = userCooldowns.get(userId) + 30_000;
 
 		if (Date.now() < expirationTime) return;
 	}
 	userCooldowns.set(userId, Date.now());
 
-	const botMentioned = message.mentions.has(client.user);
 	const channelChance = CHANNEL_CHANCES[message.channel.id] || 300;
 	const randomChance = Math.floor(Math.random() * channelChance) === 0;
 

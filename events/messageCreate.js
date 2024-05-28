@@ -17,7 +17,7 @@ async function invoke(client, message) {
 	if (message.author.bot) return;
 
 	const botMentioned = message.mentions.has(client.user);
-	const channelChance = CHANNEL_CHANCES[message.channel.id] || 200;
+	const channelChance = CHANNEL_CHANCES[message.channel.id] || 300;
 	const randomChance = Math.floor(Math.random() * channelChance) === 0;
 
 	if (botMentioned || randomChance) {

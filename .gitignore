@@ -1,3 +1,14 @@
+# in dev
+commands/ai-reply
+events/ai-reply
+
+commands/group-management
+events/group-management
+commands/verification
+
+events/verification
+
+# Core project
 package-lock.json
 databases/
 

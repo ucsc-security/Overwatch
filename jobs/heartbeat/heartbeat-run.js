@@ -14,8 +14,7 @@ async function sendHeartbeat(thread, ghost) {
 	console.log(`Heartbeat: Sent heartbeat to <#${thread.id}> ${ghost ? 'with ghost mode enabled' : ''}`);
 
 	// delete heartbeat message after 5 seconds if ghost heartbeat
-	if (ghost)
-		setTimeout(() => msg.delete(), 5000);
+	if (ghost) setTimeout(() => msg.delete(), 5000);
 
 	db.prepare('UPDATE heartbeat_enrolled SET lastHeartbeat = ? WHERE threadID = ?').run(Date.now(), thread.id);
 }

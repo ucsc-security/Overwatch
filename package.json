@@ -12,12 +12,14 @@
 		"dotenv": "^16.0.3",
 		"node-cron": "^3.0.2",
 		"node-fetch": "^3.3.1",
+		"ollama": "^0.5.1",
 		"openai": "^4.12.3"
 	},
 	"imports": {
 		"#events/*": "./events/*",
-		"#commands/*": "./commands/*.js",
-		"#jobs/*": "./jobs/*.js"
+		"#commands/*": "./commands/*",
+		"#jobs/*": "./jobs/*",
+		"#util/*": "./util/*"
 	},
 	"type": "module"
 }
